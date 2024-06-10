@@ -20,42 +20,42 @@ class BaseModel(models.Model):
 
 
 class Season(BaseModel):
-    name = models.CharField(max_length=127)
-    year = models.PositiveIntegerField(choices=year_choices(), default=current_year)
+    name = models.CharField(_('İsim'), max_length=127)
+    year = models.PositiveIntegerField(_('Yıl'), choices=year_choices(), default=current_year)
 
     def __str__(self):
         return f'{self.year} ({self.name})'
 
     class Meta(BaseModel.Meta):
-        verbose_name = _('Season')
-        verbose_name_plural = _('Seasons')
+        verbose_name = _('Sezon')
+        verbose_name_plural = _('Sezonlar')
 
 
 class Animal(BaseModel):
-    season = models.ForeignKey(Season, on_delete=models.PROTECT, default=current_year)
-    code = models.CharField(max_length=10, unique=True)
+    season = models.ForeignKey(Season, on_delete=models.PROTECT, default=current_year, related_name='animals', verbose_name=_('Sezon'))
+    code = models.CharField(max_length=10, unique=True, verbose_name=_('Kod/Numara'))
 
     def __str__(self):
         return self.code
 
     class Meta(BaseModel.Meta):
-        verbose_name = _('Animal')
-        verbose_name_plural = _('Animals')
+        verbose_name = _('Hayvan')
+        verbose_name_plural = _('Hayvanlar')
         constraints = [
             models.UniqueConstraint(fields=['season', 'code'], name='unique_animal_code_per_season')
         ]
 
 
 class Share(BaseModel):
-    animal = models.ForeignKey(Animal, on_delete=models.PROTECT)
-    name = models.CharField(max_length=127)
-    phone = PhoneNumberField(blank=True)
-    type = models.PositiveIntegerField(choices=ShareType, default=ShareType.VACIP)
-    by = models.CharField(max_length=127)
+    animal = models.ForeignKey(Animal, on_delete=models.PROTECT, related_name='shares', verbose_name=_('Hayvan'))
+    name = models.CharField(max_length=127, verbose_name=_('İsim'))
+    phone = PhoneNumberField(blank=True, verbose_name=_('Telefon'))
+    type = models.PositiveIntegerField(choices=ShareType, default=ShareType.VACIP, verbose_name=_('Türü'))
+    by = models.CharField(max_length=127, verbose_name=_('Kimin'))
 
     def __str__(self):
         return self.name
 
     class Meta(BaseModel.Meta):
-        verbose_name = _('Share')
-        verbose_name_plural = _('Shares')
+        verbose_name = _('Hisse')
+        verbose_name_plural = _('Hisseler')
