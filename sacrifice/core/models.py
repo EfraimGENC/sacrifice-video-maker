@@ -135,6 +135,14 @@ class Animal(BaseModel):
         default=False,
         verbose_name=_('İşlendi')
     )
+    video = models.FileField(
+        _('Video'),
+        upload_to='animals',
+        blank=True,
+        null=True,
+        editable=False,
+        help_text=_('Kurban kesim videosu'),
+    )
 
     def __str__(self):
         return self.code
