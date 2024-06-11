@@ -1,11 +1,13 @@
+import os
 import uuid
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import FileExtensionValidator
 
 from phonenumber_field.modelfields import PhoneNumberField
 
-from .enums import ShareType
+from .enums import ShareType, LogoPosition
 from .utils import year_choices, current_year
 
 
@@ -19,7 +21,82 @@ class BaseModel(models.Model):
         ordering = ['-created_at']
 
 
-class Season(BaseModel):
+class ProcessingSettings(models.Model):
+    intro = models.FileField(
+        _('Giriş'),
+        upload_to='intros',
+        blank=True,
+        null=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm'])
+        ],
+        help_text=_('Giriş videosu')
+    )
+    outro = models.FileField(
+        _('Çıkış'),
+        upload_to='outros',
+        blank=True,
+        null=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm'])
+        ],
+        help_text=_('Çıkış videosu')
+    )
+    frame = models.ImageField(
+        _('Çerçeve'),
+        upload_to='frames',
+        blank=True,
+        null=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['png', 'jpg', 'jpeg', 'webp'])
+        ],
+        help_text=_('Çerçeve resmi')
+    )
+    logo = models.ImageField(
+        _('Logo'),
+        upload_to='logos',
+        blank=True,
+        null=True,
+        help_text=_('Logo resmi')
+    )
+    logo_height = models.PositiveIntegerField(
+        _('Logo Yükseklik'),
+        default=100,
+        help_text=_('Logo yüksekliği')
+    )
+    logo_position = models.CharField(
+        _('Logo Pozisyon'),
+        max_length=15,
+        choices=LogoPosition,
+        default=LogoPosition.LEFT_TOP,
+        help_text=_('Logo pozisyonu')
+    )
+    logo_margin_right = models.PositiveSmallIntegerField(
+        _('Logo Sağ Kenar Boşluğu'),
+        default=0,
+        help_text=_('Logo sağ kenar boşluğu')
+    )
+    logo_margin_bottom = models.PositiveSmallIntegerField(
+        _('Logo Alt Kenar Boşluğu'),
+        default=0,
+        help_text=_('Logo alt kenar boşluğu')
+    )
+    logo_margin_left = models.PositiveSmallIntegerField(
+        _('Logo Sol Kenar Boşluğu'),
+        default=20,
+        help_text=_('Logo sol kenar boşluğu')
+    )
+    logo_margin_top = models.PositiveSmallIntegerField(
+        _('Logo Üst Kenar Boşluğu'),
+        default=20,
+        help_text=_('Logo üst kenar boşluğu')
+    )
+
+    class Meta:
+        abstract = True
+
+
+class Season(BaseModel, ProcessingSettings):
     name = models.CharField(_('İsim'), max_length=127)
     year = models.PositiveIntegerField(_('Yıl'), choices=year_choices(), default=current_year)
 
@@ -32,8 +109,32 @@ class Season(BaseModel):
 
 
 class Animal(BaseModel):
-    season = models.ForeignKey(Season, on_delete=models.PROTECT, default=current_year, related_name='animals', verbose_name=_('Sezon'))
-    code = models.CharField(max_length=10, unique=True, verbose_name=_('Kod/Numara'))
+    season = models.ForeignKey(
+        Season,
+        on_delete=models.PROTECT,
+        related_name='animals',
+        default=current_year,
+        verbose_name=_('Sezon')
+    )
+    code = models.CharField(
+        max_length=10,
+        unique=True,
+        verbose_name=_('Kod/Numara')
+    )
+    cover = models.ImageField(
+        _('Kapak'),
+        upload_to='covers',
+        blank=True,
+        null=True,
+        validators=[
+            FileExtensionValidator(allowed_extensions=['png', 'jpg', 'jpeg', 'webp'])
+        ],
+        help_text=_('Kapak resmi')
+    )
+    processed = models.BooleanField(
+        default=False,
+        verbose_name=_('İşlendi')
+    )
 
     def __str__(self):
         return self.code

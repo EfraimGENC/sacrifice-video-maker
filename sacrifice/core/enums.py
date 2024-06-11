@@ -7,3 +7,11 @@ class ShareType(models.IntegerChoices):
     SUKUR = 2, _("Şükür")
     AKIKA = 3, _("Akika")
     ADAK = 4, _("Adak")
+
+
+class LogoPosition(models.TextChoices):
+    LEFT_TOP = 'left-top', _("Sol Üst")
+    LEFT_BOTTOM = 'left-bottom', _("Sol Alt")
+    RIGHT_TOP = 'right-top', _("Sağ Üst")
+    RIGHT_BOTTOM = 'right-bottom', _("Sağ Alt")
+    CENTER = 'center', _("Orta")
