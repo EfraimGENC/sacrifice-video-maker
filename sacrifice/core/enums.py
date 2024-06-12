@@ -15,3 +15,10 @@ class LogoPosition(models.TextChoices):
     RIGHT_TOP = 'right-top', _("Sağ Üst")
     RIGHT_BOTTOM = 'right-bottom', _("Sağ Alt")
     CENTER = 'center', _("Orta")
+
+
+class AnimalStatus(models.IntegerChoices):
+    UNPROCESSED = 1, _("İşlenmemiş")
+    PROCESSING = 2, _("İşleniyor")
+    PROCESSED = 3, _("İşlenmiş")
+    ERROR = 4, _("Hata")

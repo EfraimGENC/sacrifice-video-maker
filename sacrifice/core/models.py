@@ -7,7 +7,7 @@ from django.core.validators import FileExtensionValidator
 
 from phonenumber_field.modelfields import PhoneNumberField
 
-from .enums import ShareType, LogoPosition
+from .enums import ShareType, LogoPosition, AnimalStatus
 from .utils import year_choices, current_year
 
 
@@ -22,6 +22,11 @@ class BaseModel(models.Model):
 
 
 class ProcessingSettings(models.Model):
+    process = models.BooleanField(
+        _('İşlensin mi?'),
+        default=False,
+        help_text=_('Bu sezondaki videolar otomatik oluşturulsun mu?')
+    )
     intro = models.FileField(
         _('Giriş'),
         upload_to='intros',
@@ -101,7 +106,7 @@ class Season(BaseModel, ProcessingSettings):
     year = models.PositiveIntegerField(_('Yıl'), choices=year_choices(), default=current_year)
 
     def __str__(self):
-        return f'{self.year} ({self.name})'
+        return str(self.year)
 
     class Meta(BaseModel.Meta):
         verbose_name = _('Sezon')
@@ -131,9 +136,11 @@ class Animal(BaseModel):
         ],
         help_text=_('Kapak resmi')
     )
-    processed = models.BooleanField(
-        default=False,
-        verbose_name=_('İşlendi')
+    status = models.PositiveSmallIntegerField(
+        default=AnimalStatus.UNPROCESSED,
+        verbose_name=_('Durum'),
+        choices=AnimalStatus,
+        help_text=_('Video işlenme durumu')
     )
     video = models.FileField(
         _('Video'),
@@ -145,7 +152,7 @@ class Animal(BaseModel):
     )
 
     def __str__(self):
-        return self.code
+        return f'{self.season.year}/{self.code}'
 
     class Meta(BaseModel.Meta):
         verbose_name = _('Hayvan')
@@ -160,7 +167,7 @@ class Share(BaseModel):
     name = models.CharField(max_length=127, verbose_name=_('İsim'))
     phone = PhoneNumberField(blank=True, verbose_name=_('Telefon'))
     type = models.PositiveIntegerField(choices=ShareType, default=ShareType.VACIP, verbose_name=_('Türü'))
-    by = models.CharField(max_length=127, verbose_name=_('Kimin'))
+    by = models.CharField(max_length=127, verbose_name=_('Vesile'))
 
     def __str__(self):
         return self.name
