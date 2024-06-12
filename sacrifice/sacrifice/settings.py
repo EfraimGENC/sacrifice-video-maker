@@ -139,3 +139,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Phone number field
 PHONENUMBER_DEFAULT_REGION = 'TR'
+
+
+# Celery Configuration Options
+CELERY_TIMEZONE = 'Europe/Istanbul'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60

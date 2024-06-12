@@ -33,8 +33,8 @@ def concatenate_clips(clips, video_path, method="chain", export_format='mp4'):
 
 
 def concatenate_sacrifice_clips(video_path, cover_path, intro_path, outro_path, frame_path, logo_path, logo_height,
-                                logo_position, logo_margin_top, logo_margin_right, logo_margin_bottom, logo_margin_left
-                                ):
+                                logo_position, logo_margin_top, logo_margin_right, logo_margin_bottom,
+                                logo_margin_left):
     # Intro
     intro_clip = VideoFileClip(intro_path) if intro_path else None
 
@@ -57,4 +57,3 @@ def concatenate_sacrifice_clips(video_path, cover_path, intro_path, outro_path, 
     clips = [clip for clip in clips if clip is not None]
 
     concatenate_clips(clips, video_path)
-
