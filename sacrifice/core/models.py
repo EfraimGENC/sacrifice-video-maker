@@ -165,7 +165,7 @@ class Animal(BaseModel):
 class Share(BaseModel):
     animal = models.ForeignKey(Animal, on_delete=models.PROTECT, related_name='shares', verbose_name=_('Hayvan'))
     name = models.CharField(max_length=127, verbose_name=_('İsim'))
-    phone = PhoneNumberField(blank=True, verbose_name=_('Telefon'))
+    phone = PhoneNumberField(blank=True, null=True, verbose_name=_('Telefon'))
     type = models.PositiveIntegerField(choices=ShareType, default=ShareType.VACIP, verbose_name=_('Türü'))
     by = models.CharField(max_length=127, verbose_name=_('Vesile'))
 
