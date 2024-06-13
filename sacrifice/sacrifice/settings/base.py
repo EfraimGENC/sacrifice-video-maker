@@ -184,3 +184,25 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BROKER_URL = "redis://redis:6379"
 CELERY_RESULT_BACKEND = "redis://redis:6379"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+
+# LOGGING
+# https://docs.djangoproject.com/en/5.0/topics/logging/
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

@@ -147,7 +147,6 @@ class Animal(BaseModel):
         upload_to='animals',
         blank=True,
         null=True,
-        editable=False,
         help_text=_('Kurban kesim videosu'),
     )
 

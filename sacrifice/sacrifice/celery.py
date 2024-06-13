@@ -24,3 +24,13 @@ app.autodiscover_tasks()
 @app.task(bind=True, ignore_result=True)
 def debug_task(self):
     print(f'Request: {self.request!r}')
+
+
+# SCHEDULED PERIODIC TASKS
+###############################################################################
+app.conf.beat_schedule = {
+    'make_animal_video': {
+        'task': 'core.tasks.make_animal_video',
+        'schedule': 10
+    },
+}
