@@ -3,7 +3,11 @@ import os
 from celery import Celery
 
 # Set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sacrifice.settings')
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sacrifice.settings.dev')
+if "DJANGO_SETTINGS_MODULE" not in os.environ:
+    raise Exception(
+        "DJANGO_SETTINGS_MODULE must be set in the environment before running celery."
+    )
 
 app = Celery('sacrifice')
 

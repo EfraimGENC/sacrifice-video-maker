@@ -10,22 +10,29 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
+import environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+
+# Environ
+# https://django-environ.readthedocs.io/en/latest/
+
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#yuox!dia8)#$2k628mz%pdj2=w*pxdy*&1wmfcs@wh-ij4^xq'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+SECRET_KEY = env('SECRET_KEY', cast=str, default="do_not_use_in_prod")
+DEBUG = env('DEBUG', cast=bool, default=True)
+ALLOWED_HOSTS = env('ALLOWED_HOSTS', cast=list, default=['*'])
 
 
 # Application definition
@@ -40,6 +47,7 @@ INSTALLED_APPS = [
 
     'phonenumber_field',
     'django_cleanup',
+    'django_extensions',
 
     'core',
 ]
@@ -82,8 +90,21 @@ WSGI_APPLICATION = 'sacrifice.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('POSTGRES_DB', cast=str, default='postgres'),
+        'USER': env('POSTGRES_USER', cast=str, default='postgres'),
+        'PASSWORD': env('POSTGRES_PASSWORD', cast=str, default='postgres'),
+        'HOST': env('POSTGRES_HOST', default='db'),
+        'PORT': env('POSTGRES_PORT', cast=int, default=5432),
+        'ATOMIC_REQUESTS': env('ATOMIC_REQUESTS', cast=bool, default=True)
+    }
+}
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379",
     }
 }
 
@@ -107,6 +128,16 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# DJANGO-EXTENSIONS
+# https://django-extensions.readthedocs.io/en/latest/
+
+SHELL_PLUS_IMPORTS = [
+    'from sacrifice.core.helpers import fetch_animal_for_processing',
+    'from sacrifice.core.tasks import make_animal_video',
+    'from sacrifice.core.video_concatenation import concatenate_sacrifice_clips',
+]
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -126,7 +157,10 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "staticfiles",
 ]
+STATIC_ROOT = BASE_DIR / 'static/'
 
+
+# Media Files
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
 
@@ -141,7 +175,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 PHONENUMBER_DEFAULT_REGION = 'TR'
 
 
-# Celery Configuration Options
-CELERY_TIMEZONE = 'Europe/Istanbul'
+# CELERY
+# https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html
+
+CELERY_TIMEZONE = "Europe/Istanbul"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True

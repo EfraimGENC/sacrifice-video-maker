@@ -1,0 +1,57 @@
+services:
+  redis:
+    image: redis
+    restart: unless-stopped
+
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}" ]
+      interval: 3s
+      timeout: 3s
+      retries: 3
+
+  app:
+    image: sacrifice
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - DEBUG=${DEBUG:?error}
+        - BUILD_ENV=${BUILD_ENV:?error}
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./sacrifice:/app
+    command: >
+      bash -c "chmod 555 entrypoint.sh
+      && ./entrypoint.sh"
+    ports:
+      - ${APP_PORT}:8000
+    depends_on:
+      - db
+      - redis
+
+  beat:
+    image: sacrifice
+    restart: unless-stopped
+    env_file: .env
+    command: celery -A sacrifice beat --loglevel=INFO
+    volumes:
+      - ./sacrifice:/app
+    depends_on:
+      - app
+
+  worker:
+    image: sacrifice
+    restart: unless-stopped
+    env_file: .env
+    command: celery -A sacrifice worker --loglevel=INFO --concurrency=5 --autoscale=1,4
+    volumes:
+      - ./sacrifice:/app
+    depends_on:
+      - beat
