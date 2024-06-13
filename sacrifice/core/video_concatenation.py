@@ -1,9 +1,7 @@
 import logging
-
 from pathlib import Path
 
 from moviepy.editor import VideoFileClip, concatenate_videoclips, ImageClip, CompositeVideoClip
-
 
 logger = logging.getLogger(__name__)
 
