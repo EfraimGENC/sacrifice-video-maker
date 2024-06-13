@@ -8,12 +8,15 @@ from moviepy.editor import VideoFileClip, concatenate_videoclips, ImageClip, Com
 logger = logging.getLogger(__name__)
 
 
-def composite_image(clip, content_path, height=None, position=('center',), mt=0, mr=0, mb=0, ml=0):
-    frame = (ImageClip(content_path)
-             .with_duration(clip.duration)
-             .resize(height=height if height else clip.h)
-             .margin(top=mt, right=mr, bottom=mb, left=ml, opacity=0)
-             .with_position(position))
+def composite_image(clip, content_path, height=None, position='center', mt=0, mr=0, mb=0, ml=0):
+    logger.info('composite_image - content_path: %s %s', content_path, position)
+    frame = (
+        ImageClip(content_path)
+        .with_duration(clip.duration)
+        .resize(height=height if height else clip.h)
+        .margin(top=mt, right=mr, bottom=mb, left=ml, opacity=0)
+        .with_position(position)
+    )
     return CompositeVideoClip([clip, frame])
 
 
@@ -36,6 +39,8 @@ def concatenate_clips(clips, video_path, method="chain", export_format='mp4'):
 
     for clip in clips:
         clip.close()
+
+    return video_path
 
 
 def concatenate_sacrifice_clips(video_path, cover_path, intro_path, outro_path, frame_path, logo_path, logo_height,
@@ -62,4 +67,6 @@ def concatenate_sacrifice_clips(video_path, cover_path, intro_path, outro_path, 
     clips = [intro_clip, cover_image, sacrifice_clip, outro_clip]
     clips = [clip for clip in clips if clip is not None]
 
-    concatenate_clips(clips, video_path)
+    new_video_path = concatenate_clips(clips, video_path)
+
+    return new_video_path

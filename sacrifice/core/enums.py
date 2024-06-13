@@ -16,6 +16,10 @@ class LogoPosition(models.TextChoices):
     RIGHT_BOTTOM = 'right-bottom', _("Sağ Alt")
     CENTER = 'center', _("Orta")
 
+    @classmethod
+    def convert_for_moviepy(cls, position):
+        return tuple(position.split('-')) if '-' in position else position
+
 
 class AnimalStatus(models.IntegerChoices):
     UNPROCESSED = 1, _("İşlenmemiş")
