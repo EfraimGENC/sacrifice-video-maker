@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 
 def composite_image(clip, content_path, height=None, position='center', mt=0, mr=0, mb=0, ml=0):
-    logger.info('composite_image - content_path: %s %s', content_path, position)
+    logger.info(f'composite_image - content_path: {content_path} {position}')
     frame = (
         ImageClip(content_path)
         .set_duration(clip.duration)
@@ -30,7 +30,7 @@ def concatenate_clips(clips, video_path, method="chain", export_format='mp4'):
     if method == "chain":
         min_height = min([c.h for c in clips])
         min_width = min([c.w for c in clips])
-        logger.info('Clips will be resized to %sx%s', min_width, min_height)
+        logger.info(f'Clips will be resized to {min_width}x{min_height}')
         clips = [c.resize((min_width, min_height)) for c in clips]
 
     final_clip = concatenate_videoclips(clips, method)

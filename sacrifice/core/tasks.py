@@ -20,13 +20,13 @@ logger = logging.getLogger(__name__)
 def make_animal_video():
     logger.info('make_animal_video - started')
     animal = fetch_animal_for_processing()
-    logger.info('make_animal_video - animal: %s', animal)
+    logger.info(f'make_animal_video - animal: {animal}')
     if not animal:
         return
 
     new_video_path = None
     try:
-        logger.info('make_animal_video - processing:', animal)
+        logger.info(f'make_animal_video - processing: {animal}')
 
         new_video_path = concatenate_sacrifice_clips(
             animal.video.path,
@@ -43,19 +43,19 @@ def make_animal_video():
             animal.season.logo_margin_left
         )
     except Exception as e:
-        logger.info('make_animal_video - error %s  %s:', e, animal)
+        logger.info(f'make_animal_video - error {e} {animal}:')
         traceback.print_exc()
         processing_status = AnimalStatus.ERROR
     else:
         processing_status = AnimalStatus.PROCESSED
 
-    logger.info('make_animal_video - processing is finished: %s', animal)
+    logger.info(f'make_animal_video - processing is finished: {animal}')
     with transaction.atomic():
         animal = Animal.objects.select_for_update().get(pk=animal.pk)
         animal.status = processing_status
         if new_video_path is not None and processing_status == AnimalStatus.PROCESSED:
             relative_file_path = os.path.relpath(new_video_path, settings.MEDIA_ROOT)
-            logger.info('make_animal_video - new video path: %s', relative_file_path)
+            logger.info(f'make_animal_video - new video path: {relative_file_path}')
             animal.video.name = relative_file_path
         animal.save()
-        logger.info('make_animal_video - marked as processed: %s', animal)
+        logger.info(f'make_animal_video - marked as processed: {animal}')
