@@ -201,7 +201,7 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': env('LOG_LEVEL', cast=str, default='INFO').upper(),
             # 'propagate': True,
         },
     },
