@@ -10,10 +10,10 @@ def composite_image(clip, content_path, height=None, position='center', mt=0, mr
     logger.info('composite_image - content_path: %s %s', content_path, position)
     frame = (
         ImageClip(content_path)
-        .with_duration(clip.duration)
+        .set_duration(clip.duration)
         .resize(height=height if height else clip.h)
         .margin(top=mt, right=mr, bottom=mb, left=ml, opacity=0)
-        .with_position(position)
+        .set_position(position)
     )
     return CompositeVideoClip([clip, frame])
 
@@ -25,6 +25,7 @@ def concatenate_clips(clips, video_path, method="chain", export_format='mp4'):
     video_path = Path(video_path)
     if video_path.suffix.lower() != f'.{export_format}':
         video_path = video_path.with_suffix(f'.{export_format}')
+    video_path = str(video_path)
 
     if method == "chain":
         min_height = min([c.h for c in clips])
@@ -48,7 +49,7 @@ def concatenate_sacrifice_clips(video_path, cover_path, intro_path, outro_path, 
     intro_clip = VideoFileClip(intro_path) if intro_path else None
 
     # Cover
-    cover_image = ImageClip(cover_path).with_duration(2) if cover_path else None
+    cover_image = ImageClip(cover_path).set_duration(2) if cover_path else None
 
     # Clip
     sacrifice_clip = VideoFileClip(video_path)
