@@ -20,7 +20,7 @@ class SeasonAdmin(admin.ModelAdmin):
 class AnimalAdmin(ForeignKeyAutocompleteAdmin):
     list_display = ('name', 'status', 'season', 'has_cover_image')
     list_filter = ('status', 'created_at')
-    readonly_fields = ('video_player',)
+    readonly_fields = ('processed_video_player',)
     search_fields = ('code', 'season__year')
     autocomplete_fields = ('season',)
     actions = ['process_video']
@@ -33,19 +33,20 @@ class AnimalAdmin(ForeignKeyAutocompleteAdmin):
     def has_cover_image(self, obj):
         return bool(obj.cover)
 
-    @admin.display(description='Video Oynatıcı')
-    def video_player(self, obj):
-        if obj.original_video:
+    @admin.display(description='İşlenmiş Video')
+    def processed_video_player(self, obj):
+        if obj.processed_video:
             return format_html(
                 '<video id="{}" height="300" controls>'
                 '<source src="{}" type="video/mp4">'
                 'Your browser does not support the video tag.'
                 '</video>',
                 obj.uuid,
-                obj.original_video.url
+                obj.processed_video.url
             )
         return "No video available"
 
+    @admin.action(description='Seçili videoları işle!')
     def process_video(self, request, queryset):
         ids = queryset.values_list('id', flat=True).order_by('id') or None
         if not ids:

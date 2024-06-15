@@ -16,10 +16,10 @@ def make_animal_video(animal_id: int, force: bool = False):
         return
 
     logger.info(f'make_animal_video - animal: {animal}')
-    new_video_file, processing_status = animal_service.process_animal(animal)
+    processed_video_file, temp_video_path, processing_status = animal_service.process_animal(animal)
     logger.info(f'make_animal_video - processing is finished: {animal}')
 
-    animal_service.finnish_animal_processing(animal_id, new_video_file, processing_status)
+    animal_service.finnish_animal_processing(animal_id, processed_video_file, temp_video_path, processing_status)
 
 
 @shared_task

@@ -144,7 +144,7 @@ class Animal(BaseModel):
         help_text=_('Video işlenme durumu')
     )
     original_video = models.FileField(
-        _('Video'),
+        _('Orjinal Video'),
         upload_to=animal_video_path_original,
         blank=True,
         null=True,
