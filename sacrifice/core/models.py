@@ -155,6 +155,7 @@ class Animal(BaseModel):
         upload_to=animal_video_path_processed,
         blank=True,
         null=True,
+        editable=False,
         help_text=_('İşlenmiş kurban kesim videosu')
     )
 

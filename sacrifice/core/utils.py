@@ -24,7 +24,7 @@ def get_random_string(length, options='abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRS
 def generate_animal_video_path(prefix):
     def animal_video_path(instance, filename):
         random_string = get_random_string(8)
-        path = 'animals/{season_year}_{season_id}/{animal_code}/{prefix}_{rnd}.{extension}'.format(
+        path = 'animals/{season_year}_{season_id}/{animal_code}/{animal_code}_{prefix}_{rnd}.{extension}'.format(
             season_year=instance.season.year,
             season_id=instance.season.id,
             animal_code=instance.code,

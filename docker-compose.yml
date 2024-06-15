@@ -52,6 +52,11 @@ services:
     image: sacrifice
     restart: unless-stopped
     env_file: .env
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
     command: celery -A sacrifice worker --loglevel=INFO --concurrency=5 --autoscale=1,4
     volumes:
       - ./sacrifice:/app

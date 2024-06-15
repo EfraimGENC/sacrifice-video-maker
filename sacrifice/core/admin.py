@@ -18,7 +18,7 @@ class SeasonAdmin(admin.ModelAdmin):
 
 @admin.register(Animal)
 class AnimalAdmin(ForeignKeyAutocompleteAdmin):
-    list_display = ('name', 'status', 'season', 'has_cover_image')
+    list_display = ('name', 'status', 'season', 'has_cover_image', 'share_count', 'download_processed_video')
     list_filter = ('status', 'created_at')
     readonly_fields = ('processed_video_player',)
     search_fields = ('code', 'season__year')
@@ -32,6 +32,21 @@ class AnimalAdmin(ForeignKeyAutocompleteAdmin):
     @admin.display(description='Kapak Görseli Mevcut', boolean=True)
     def has_cover_image(self, obj):
         return bool(obj.cover)
+
+    @admin.display(description='Hisse Sayısı')
+    def share_count(self, obj):
+        share_count = obj.shares.count()
+        color = 'red' if share_count != 7 else 'green'
+        return format_html('<strong style="color:{};">{}</strong>', color, share_count)
+
+    @admin.display(description='İşlenmiş Videoyu İndir')
+    def download_processed_video(self, obj):
+        if obj.processed_video:
+            return format_html(
+                '<a href="{}" target="_blank" download>İndir</a>',
+                obj.processed_video.url
+            )
+        return "No video available"
 
     @admin.display(description='İşlenmiş Video')
     def processed_video_player(self, obj):
