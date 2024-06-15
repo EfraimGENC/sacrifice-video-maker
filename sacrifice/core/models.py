@@ -7,7 +7,8 @@ from django.core.validators import FileExtensionValidator
 from phonenumber_field.modelfields import PhoneNumberField
 
 from .enums import ShareType, LogoPosition, AnimalStatus
-from .utils import year_choices, current_year, animal_video_path_original, animal_video_path_processed
+from .utils import (year_choices, current_year, animal_video_path_original, animal_video_path_processed,
+                    animal_video_path_cover)
 
 
 class BaseModel(models.Model):
@@ -128,7 +129,7 @@ class Animal(BaseModel):
     )
     cover = models.ImageField(
         _('Kapak'),
-        upload_to='covers',
+        upload_to=animal_video_path_cover,
         blank=True,
         null=True,
         validators=[

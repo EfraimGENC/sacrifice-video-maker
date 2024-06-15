@@ -42,3 +42,7 @@ def animal_video_path_original(instance, filename):
 
 def animal_video_path_processed(instance, filename):
     return generate_animal_video_path('processed')(instance, filename)
+
+
+def animal_video_path_cover(instance, filename):
+    return generate_animal_video_path('cover')(instance, filename)

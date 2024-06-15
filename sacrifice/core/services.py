@@ -1,11 +1,10 @@
-import os
+import io
 import logging
 import traceback
-from pathlib import Path
 
 from django.db import transaction
 from django.db.models import Q
-from django.conf import settings
+from django.core.files import File
 
 from moviepy.editor import VideoFileClip, concatenate_videoclips, ImageClip, CompositeVideoClip
 
@@ -32,14 +31,9 @@ class VideoConcatenationService:
         return CompositeVideoClip([clip, frame])
 
     @staticmethod
-    def concatenate_clips(clips, video_path, method="chain", export_format='mp4'):
+    def concatenate_clips(clips, method="chain"):
         if method not in ["chain", "compose"]:
             raise ValueError('Invalid method. Must be one of "chain" or "compose"')
-
-        video_path = Path(video_path)
-        if video_path.suffix.lower() != f'.{export_format}':
-            video_path = video_path.with_suffix(f'.{export_format}')
-        video_path = str(video_path)
 
         if method == "chain":
             min_height = min([c.h for c in clips])
@@ -48,12 +42,16 @@ class VideoConcatenationService:
             clips = [c.resize((min_width, min_height)) for c in clips]
 
         final_clip = concatenate_videoclips(clips, method)
-        final_clip.write_videofile(video_path, fps=30, threads=8, preset='ultrafast', audio_codec='aac')
+        video_buffer = io.BytesIO()  # Bellekte bir byte stream oluştur
+        final_clip.write_videofile(video_buffer, codec='libx264', audio_codec='aac', threads=8)  # Videoyu byte stream'e yaz
+        video_buffer.seek(0)  # Byte stream'i başa sar
+        django_file = File(video_buffer, name='processed_video.mp4')  # Byte stream'i Django'nun FileField'ına yükleme yapmak için kullan
+        video_buffer.close()  # Bellekteki byte stream'i kapat
 
         for clip in clips:
             clip.close()
 
-        return video_path
+        return django_file
 
     @staticmethod
     def concatenate_sacrifice_clips(video_path, cover_path, intro_path, outro_path, frame_path, logo_path, logo_height,
@@ -80,9 +78,9 @@ class VideoConcatenationService:
         clips = [intro_clip, cover_image, sacrifice_clip, outro_clip]
         clips = [clip for clip in clips if clip is not None]
 
-        new_video_path = VideoConcatenationService.concatenate_clips(clips, video_path)
+        new_video_file = VideoConcatenationService.concatenate_clips(clips)
 
-        return new_video_path
+        return new_video_file
 
 
 class AnimalServices:
@@ -107,13 +105,12 @@ class AnimalServices:
             return animal
 
     @staticmethod
-    def finnish_animal_processing(animal_id, new_video_path, processing_status):
+    def finnish_animal_processing(animal_id, new_video_file, processing_status):
         with transaction.atomic():
             animal = Animal.objects.select_for_update().get(pk=animal_id)
             animal.status = processing_status
-            if new_video_path is not None and processing_status == AnimalStatus.PROCESSED:
-                relative_file_path = os.path.relpath(new_video_path, settings.MEDIA_ROOT)
-                animal.original_video.name = relative_file_path
+            if new_video_file:
+                animal.processed_video.save('processed_video.mp4', new_video_file, save=False)
             animal.save()
 
     @staticmethod
@@ -123,11 +120,11 @@ class AnimalServices:
 
     @staticmethod
     def process_animal(animal: Animal):
-        new_video_path: str | None = None
+        new_video_file: File | None = None
         try:
             logger.info(f'make_animal_video - processing: {animal}')
 
-            new_video_path = VideoConcatenationService.concatenate_sacrifice_clips(
+            new_video_file = VideoConcatenationService.concatenate_sacrifice_clips(
                 animal.original_video.path,
                 animal.cover.path if animal.cover else None,
                 animal.season.intro.path if animal.season.intro else None,
@@ -148,4 +145,4 @@ class AnimalServices:
         else:
             processing_status = AnimalStatus.PROCESSED
 
-        return new_video_path, processing_status
+        return new_video_file, processing_status
