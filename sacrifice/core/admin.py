@@ -2,7 +2,7 @@ import phonenumbers
 from django.contrib import admin
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
 from django.utils.html import format_html
-from django.utils.translation import ngettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.contrib import messages
 
 
@@ -35,39 +35,25 @@ class AnimalAdmin(ForeignKeyAutocompleteAdmin):
 
     @admin.display(description='Video Oynatıcı')
     def video_player(self, obj):
-        if obj.video:
+        if obj.original_video:
             return format_html(
                 '<video id="{}" height="300" controls>'
                 '<source src="{}" type="video/mp4">'
                 'Your browser does not support the video tag.'
                 '</video>',
                 obj.uuid,
-                obj.video.url
+                obj.original_video.url
             )
         return "No video available"
 
     def process_video(self, request, queryset):
         ids = queryset.values_list('id', flat=True).order_by('id') or None
         if not ids:
-            self.message_user(
-                request,
-                _("Seçili hayvanlar içerisinde işlenmeye uygun olan bulunamadı."),
-                messages.ERROR,
-            )
+            self.message_user(request, _("Seçili hayvan içerisinde işlenmeye uygun olan bulunamadı."), messages.ERROR)
             return
         for animal_id in ids:
             make_animal_video.delay(animal_id, force=True)
-
-        self.message_user(
-            request,
-            _(
-                "%d kurban videosu başarıyla işlendi.",
-                "%d kurban videoları başarıyla işlendi.",
-                len(ids),
-            )
-            % len(ids),
-            messages.SUCCESS,
-        )
+        self.message_user(request, _(f'{len(ids)} kurban videosu başarıyla işlendi.'), messages.SUCCESS)
 
 
 @admin.register(Share)

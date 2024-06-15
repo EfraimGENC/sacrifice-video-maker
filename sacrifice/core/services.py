@@ -113,7 +113,7 @@ class AnimalServices:
             animal.status = processing_status
             if new_video_path is not None and processing_status == AnimalStatus.PROCESSED:
                 relative_file_path = os.path.relpath(new_video_path, settings.MEDIA_ROOT)
-                animal.video.name = relative_file_path
+                animal.original_video.name = relative_file_path
             animal.save()
 
     @staticmethod
@@ -128,7 +128,7 @@ class AnimalServices:
             logger.info(f'make_animal_video - processing: {animal}')
 
             new_video_path = VideoConcatenationService.concatenate_sacrifice_clips(
-                animal.video.path,
+                animal.original_video.path,
                 animal.cover.path if animal.cover else None,
                 animal.season.intro.path if animal.season.intro else None,
                 animal.season.outro.path if animal.season.outro else None,

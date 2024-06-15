@@ -7,7 +7,7 @@ from django.core.validators import FileExtensionValidator
 from phonenumber_field.modelfields import PhoneNumberField
 
 from .enums import ShareType, LogoPosition, AnimalStatus
-from .utils import year_choices, current_year, get_random_string
+from .utils import year_choices, current_year, animal_video_path_original, animal_video_path_processed
 
 
 class BaseModel(models.Model):
@@ -113,18 +113,6 @@ class Season(BaseModel, ProcessingSettings):
         verbose_name_plural = _('Sezonlar')
 
 
-def animal_video_path(instance, filename):
-    random_string = get_random_string(8)
-    path = 'animals/{season_year}_{season_id}/{animal_code}/unprocessed_{rnd}.{extension}'.format(
-        season_year=instance.season.year,
-        season_id=instance.season.id,
-        animal_code=instance.code,
-        rnd=random_string,
-        extension=filename.split('.')[-1]
-    )
-    return path
-
-
 class Animal(BaseModel):
     season = models.ForeignKey(
         Season,
@@ -154,12 +142,19 @@ class Animal(BaseModel):
         choices=AnimalStatus,
         help_text=_('Video işlenme durumu')
     )
-    video = models.FileField(
+    original_video = models.FileField(
         _('Video'),
-        upload_to=animal_video_path,
+        upload_to=animal_video_path_original,
         blank=True,
         null=True,
-        help_text=_('Kurban kesim videosu'),
+        help_text=_('Orijinal kurban kesim videosu'),
+    )
+    processed_video = models.FileField(
+        _('İşlenmiş Video'),
+        upload_to=animal_video_path_processed,
+        blank=True,
+        null=True,
+        help_text=_('İşlenmiş kurban kesim videosu')
     )
 
     def __str__(self):

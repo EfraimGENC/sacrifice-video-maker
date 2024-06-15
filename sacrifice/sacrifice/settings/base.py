@@ -134,7 +134,7 @@ AUTH_PASSWORD_VALIDATORS = [
 SHELL_PLUS_IMPORTS = [
     'from sacrifice.core.helpers import fetch_animal_for_processing',
     'from sacrifice.core.tasks import make_animal_video',
-    'from sacrifice.core.video_concatenation import concatenate_sacrifice_clips',
+    'from sacrifice.core.service import VideoConcatenationService',
 ]
 
 
