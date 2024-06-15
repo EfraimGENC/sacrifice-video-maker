@@ -1,20 +1,29 @@
 import phonenumbers
 from django.contrib import admin
 from django_extensions.admin import ForeignKeyAutocompleteAdmin
+from django.utils.html import format_html
+from django.utils.translation import ngettext_lazy as _
+from django.contrib import messages
+
+
 from .models import Season, Animal, Share
+from .tasks import make_animal_video
 
 
 @admin.register(Season)
 class SeasonAdmin(admin.ModelAdmin):
-    list_display = ('year', 'name', 'process')
+    list_display = ('year', 'name', 'auto_process')
     search_fields = ('year', 'name')
 
 
 @admin.register(Animal)
 class AnimalAdmin(ForeignKeyAutocompleteAdmin):
     list_display = ('name', 'status', 'season', 'has_cover_image')
+    list_filter = ('status', 'created_at')
+    readonly_fields = ('video_player',)
     search_fields = ('code', 'season__year')
     autocomplete_fields = ('season',)
+    actions = ['process_video']
 
     @admin.display(description='name')
     def name(self, obj):
@@ -23,6 +32,42 @@ class AnimalAdmin(ForeignKeyAutocompleteAdmin):
     @admin.display(description='Kapak Görseli Mevcut', boolean=True)
     def has_cover_image(self, obj):
         return bool(obj.cover)
+
+    @admin.display(description='Video Oynatıcı')
+    def video_player(self, obj):
+        if obj.video:
+            return format_html(
+                '<video id="{}" height="300" controls>'
+                '<source src="{}" type="video/mp4">'
+                'Your browser does not support the video tag.'
+                '</video>',
+                obj.uuid,
+                obj.video.url
+            )
+        return "No video available"
+
+    def process_video(self, request, queryset):
+        ids = queryset.values_list('id', flat=True).order_by('id') or None
+        if not ids:
+            self.message_user(
+                request,
+                _("Seçili hayvanlar içerisinde işlenmeye uygun olan bulunamadı."),
+                messages.ERROR,
+            )
+            return
+        for animal_id in ids:
+            make_animal_video.delay(animal_id, force=True)
+
+        self.message_user(
+            request,
+            _(
+                "%d kurban videosu başarıyla işlendi.",
+                "%d kurban videoları başarıyla işlendi.",
+                len(ids),
+            )
+            % len(ids),
+            messages.SUCCESS,
+        )
 
 
 @admin.register(Share)

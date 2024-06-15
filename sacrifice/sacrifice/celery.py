@@ -30,7 +30,7 @@ def debug_task(self):
 ###############################################################################
 app.conf.beat_schedule = {
     'make_animal_video': {
-        'task': 'core.tasks.make_animal_video',
-        'schedule': 10
+        'task': 'core.tasks.auto_process_animals',
+        'schedule': 60.0 * 5
     },
 }

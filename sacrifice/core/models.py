@@ -1,4 +1,3 @@
-import os
 import uuid
 
 from django.db import models
@@ -8,7 +7,7 @@ from django.core.validators import FileExtensionValidator
 from phonenumber_field.modelfields import PhoneNumberField
 
 from .enums import ShareType, LogoPosition, AnimalStatus
-from .utils import year_choices, current_year
+from .utils import year_choices, current_year, get_random_string
 
 
 class BaseModel(models.Model):
@@ -22,10 +21,11 @@ class BaseModel(models.Model):
 
 
 class ProcessingSettings(models.Model):
-    process = models.BooleanField(
-        _('İşlensin mi?'),
+    auto_process = models.BooleanField(
+        _('Otomatik İşleme'),
         default=False,
-        help_text=_('Bu sezondaki videolar otomatik oluşturulsun mu?')
+        help_text=_('Kurban videoları arkaplanda düzenli olarak işlensin mi? \
+        İşaretlerseniz, "işlenmemiş" durumundaki videolar otomatik olarak arkaplanda işlenir.')
     )
     intro = models.FileField(
         _('Giriş'),
@@ -106,11 +106,23 @@ class Season(BaseModel, ProcessingSettings):
     year = models.PositiveIntegerField(_('Yıl'), choices=year_choices(), default=current_year)
 
     def __str__(self):
-        return str(self.year)
+        return f'{self.year} ({self.name})'
 
     class Meta(BaseModel.Meta):
         verbose_name = _('Sezon')
         verbose_name_plural = _('Sezonlar')
+
+
+def animal_video_path(instance, filename):
+    random_string = get_random_string(8)
+    path = 'animals/{season_year}_{season_id}/{animal_code}/unprocessed_{rnd}.{extension}'.format(
+        season_year=instance.season.year,
+        season_id=instance.season.id,
+        animal_code=instance.code,
+        rnd=random_string,
+        extension=filename.split('.')[-1]
+    )
+    return path
 
 
 class Animal(BaseModel):
@@ -144,7 +156,7 @@ class Animal(BaseModel):
     )
     video = models.FileField(
         _('Video'),
-        upload_to='animals',
+        upload_to=animal_video_path,
         blank=True,
         null=True,
         help_text=_('Kurban kesim videosu'),
