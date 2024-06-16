@@ -62,13 +62,8 @@ services:
         limits:
           cpus: '1'
           memory: 2G
-    command: celery -A sacrifice worker --loglevel=INFO --concurrency=5 --autoscale=1,4
+    command: celery -A sacrifice worker --loglevel=INFO --concurrency=1 # --autoscale=1,4
     volumes:
       - ./sacrifice:/app
     depends_on:
       - beat
-
-networks:
-  default:
-    external: true
-    name: sacrifice
