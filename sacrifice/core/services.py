@@ -51,7 +51,7 @@ class VideoConcatenationService:
         temp_video.close()  # Dosyayı kapatmadan önce yolu al ve ardından dosyayı kapat
 
         # Videoyu geçici dosyaya yaz
-        final_clip.write_videofile(temp_video_path, codec='libx264', audio_codec='aac')
+        final_clip.write_videofile(temp_video_path, fps=30, threads=8, preset='ultrafast', audio_codec='aac')
 
         # Geçici dosyayı Django'nun FileField'ına yüklemek için aç
         f = open(temp_video_path, 'rb')

@@ -26,6 +26,10 @@ def make_animal_video(animal_id: int, force: bool = False):
 def auto_process_animals():
     logger.info('auto_process_animals - started')
     animal_ids = animal_service.fetch_animals_for_auto_processing()
+    if not animal_ids:
+        logger.info('auto_process_animals - no available animals found')
+        return
+
     logger.info(f'auto_process_animals - animals: {animal_ids}')
     for animal_id in animal_ids:
         make_animal_video.delay(animal_id)

@@ -20,7 +20,7 @@ class SeasonAdmin(admin.ModelAdmin):
 class AnimalAdmin(ForeignKeyAutocompleteAdmin):
     list_display = ('name', 'status', 'season', 'has_cover_image', 'share_count', 'download_processed_video')
     list_filter = ('status', 'created_at')
-    readonly_fields = ('processed_video_player',)
+    readonly_fields = ('processed_video_player', 'updated_at', 'created_at')
     search_fields = ('code', 'season__year')
     autocomplete_fields = ('season',)
     actions = ['process_video']
@@ -69,7 +69,7 @@ class AnimalAdmin(ForeignKeyAutocompleteAdmin):
             return
         for animal_id in ids:
             make_animal_video.delay(animal_id, force=True)
-        self.message_user(request, _(f'{len(ids)} kurban videosu başarıyla işlendi.'), messages.SUCCESS)
+        self.message_user(request, _(f'{len(ids)} kurban videosu başarıyla işleme kuyruğuna alındı.'), messages.SUCCESS)
 
 
 @admin.register(Share)
