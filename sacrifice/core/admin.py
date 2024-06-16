@@ -43,10 +43,10 @@ class AnimalAdmin(ForeignKeyAutocompleteAdmin):
     def download_processed_video(self, obj):
         if obj.processed_video:
             return format_html(
-                '<a href="{}" target="_blank" download>İndir</a>',
+                '<a href="{}" target="_blank" download>İNDİR</a>',
                 obj.processed_video.url
             )
-        return "No video available"
+        return "Video mevcut değil"
 
     @admin.display(description='İşlenmiş Video')
     def processed_video_player(self, obj):
@@ -59,7 +59,7 @@ class AnimalAdmin(ForeignKeyAutocompleteAdmin):
                 obj.uuid,
                 obj.processed_video.url
             )
-        return "No video available"
+        return "Video mevcut değil"
 
     @admin.action(description='Seçili videoları işle!')
     def process_video(self, request, queryset):
