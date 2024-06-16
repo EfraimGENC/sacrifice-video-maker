@@ -65,3 +65,8 @@ services:
       - ./sacrifice:/app
     depends_on:
       - beat
+
+networks:
+  default:
+    external: true
+    name: sacrifice
