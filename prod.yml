@@ -10,7 +10,7 @@ npm_app:
     # - '21:21' # FTP
   environment:
     # Mysql/Maria connection parameters:
-    DB_MYSQL_HOST: "npmdb"
+    DB_MYSQL_HOST: "npm_db"
     DB_MYSQL_PORT: 3306
     DB_MYSQL_USER: "npm"
     DB_MYSQL_PASSWORD: "npm"
