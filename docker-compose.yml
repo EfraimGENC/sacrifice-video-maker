@@ -1,10 +1,12 @@
 services:
   redis:
     image: redis
+    container_name: sacrifice_redis
     restart: unless-stopped
 
   db:
     image: postgres:16
+    container_name: sacrifice_db
     restart: unless-stopped
     env_file: .env
     ports:
@@ -19,6 +21,7 @@ services:
 
   app:
     image: sacrifice
+    container_name: sacrifice_app
     build:
       context: .
       dockerfile: Dockerfile
@@ -40,6 +43,7 @@ services:
 
   beat:
     image: sacrifice
+    container_name: sacrifice_beat
     restart: unless-stopped
     env_file: .env
     command: celery -A sacrifice beat --loglevel=INFO
@@ -50,6 +54,7 @@ services:
 
   worker:
     image: sacrifice
+    container_name: sacrifice_worker
     restart: unless-stopped
     env_file: .env
     deploy:
@@ -62,3 +67,8 @@ services:
       - ./sacrifice:/app
     depends_on:
       - beat
+
+networks:
+  default:
+    external: true
+    name: sacrifice

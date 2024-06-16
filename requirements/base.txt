@@ -5,6 +5,7 @@ django-cleanup==8.1.0
 moviepy==1.0.3
 # moviepy @ git+https://github.com/Zulko/moviepy@master
 opencv-python==4.10.0.82
+numpy==1.26.4
 celery==5.4.0
 django-environ==0.11.2
 django-extensions==3.2.3
