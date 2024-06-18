@@ -22,7 +22,8 @@ services:
     volumes:
       - ./data/npm/data:/data
       - ./data/npm/letsencrypt:/etc/letsencrypt
-      - ./sacrifice/media:/data/sacrifice/media
+      - ./sacrifice/media:/data/sacrifice/media:ro
+      - ./sacrifice/static:/data/sacrifice/static:ro
     healthcheck:
       test: ["CMD", "/usr/bin/check-health"]
       interval: 10s
