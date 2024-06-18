@@ -7,8 +7,8 @@ ifneq (,$(wildcard ./.env))
 endif
 
 # Variables
-DOCKER_COMPOSE_DEV = docker-compose -f docker-compose.yml -f docker-compose.override.yml
-DOCKER_COMPOSE_PROD = docker-compose -f docker-compose.yml -f docker-compose.prod.yml
+DOCKER_COMPOSE_DEV = docker compose -f docker-compose.yml -f docker-compose.override.yml
+DOCKER_COMPOSE_PROD = docker compose -f docker-compose.yml -f docker-compose.prod.yml
 
 .PHONY: up down logs restart pull makemigrations migrate createsuperuser shell test rebuild rebuild-no-cache collectstatic
 
