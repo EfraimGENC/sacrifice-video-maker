@@ -1,9 +1,12 @@
+import io
 import uuid
 
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import FileExtensionValidator
+from django.core.files import File
 
+from PIL import Image, ImageCms
 from phonenumber_field.modelfields import PhoneNumberField
 
 from .enums import ShareType, LogoPosition, AnimalStatus
@@ -168,6 +171,28 @@ class Animal(BaseModel):
         constraints = [
             models.UniqueConstraint(fields=['season', 'code'], name='unique_animal_code_per_season')
         ]
+
+    def save(self, *args, **kwargs):
+        if self.cover:
+            self.cover = self.convert_image_to_srgb(self.cover)
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def convert_image_to_srgb(image_field):
+        image = Image.open(image_field)
+
+        if image.mode in ['RGB', 'RGBA']:
+            return image_field
+
+        image = image.convert('RGB')
+
+        image_io = io.BytesIO()
+        image.save(image_io, format='JPEG')
+        image_io.seek(0)
+
+        image_file = File(image_io, name=image_field.name)
+
+        return image_file
 
 
 class Share(BaseModel):
