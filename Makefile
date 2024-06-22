@@ -10,7 +10,7 @@ endif
 DOCKER_COMPOSE_DEV = docker compose -f docker-compose.yml -f docker-compose.override.yml
 DOCKER_COMPOSE_PROD = docker compose -f docker-compose.yml -f docker-compose.prod.yml
 
-.PHONY: build build-no-cache up down logs restart pull git-pull rebuild rebuild-no-cache update makemigrations migrate createsuperuser collectstatic shell test
+.PHONY: build build-no-cache up down logs restart pull prune git-pull rebuild rebuild-no-cache update makemigrations migrate createsuperuser collectstatic shell test
 
 # Check if ENV is set, default to 'dev'
 ifeq ($(BUILD_ENV), prod)
