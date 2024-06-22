@@ -48,15 +48,20 @@ restart:
 pull:
 	$(DOCKER_COMPOSE) pull --ignore-pull-failures
 
+# Docker prune
+prune:
+	docker system prune --all --volumes --force
+	docker builder prune --all --force
+
 # Git pull
 git-pull:
 	git pull
 
 # Clean and rebuild the Docker Compose services
-rebuild: down pull build up logs
+rebuild: down pull build up prune logs
 
 # Clean and rebuild the Docker Compose services with no cache
-rebuild-no-cache: down pull build-no-cache up logs
+rebuild-no-cache: down pull build-no-cache up prune logs
 
 # Update
 update: down git-pull rebuild-no-cache
