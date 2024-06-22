@@ -10,7 +10,7 @@ endif
 DOCKER_COMPOSE_DEV = docker compose -f docker-compose.yml -f docker-compose.override.yml
 DOCKER_COMPOSE_PROD = docker compose -f docker-compose.yml -f docker-compose.prod.yml
 
-.PHONY: up down logs restart pull makemigrations migrate createsuperuser shell test rebuild rebuild-no-cache collectstatic
+.PHONY: build build-no-cache up down logs restart pull git-pull rebuild rebuild-no-cache update makemigrations migrate createsuperuser collectstatic shell test
 
 # Check if ENV is set, default to 'dev'
 ifeq ($(BUILD_ENV), prod)
@@ -18,6 +18,15 @@ ifeq ($(BUILD_ENV), prod)
 else
     DOCKER_COMPOSE = $(DOCKER_COMPOSE_DEV)
 endif
+DOCKER_EXEC_MANAGE = $(DOCKER_COMPOSE) exec app python manage.py
+
+# Build the Docker Compose services
+build:
+	$(DOCKER_COMPOSE) build
+
+# Build the Docker Compose services with no cache
+build-no-cache:
+	$(DOCKER_COMPOSE) build --no-cache
 
 # Start the Docker Compose services
 up:
@@ -39,38 +48,42 @@ restart:
 pull:
 	$(DOCKER_COMPOSE) pull --ignore-pull-failures
 
+# Git pull
+git-pull:
+	git pull
+
+# Clean and rebuild the Docker Compose services
+rebuild: down pull build up logs
+
+# Clean and rebuild the Docker Compose services with no cache
+rebuild-no-cache: down pull build-no-cache up logs
+
+# Update
+update: down git-pull rebuild-no-cache
+
+
+# Django Commands
+
 # Run Django makemigrations
 makemigrations:
-	$(DOCKER_COMPOSE) exec app python manage.py makemigrations
+	$(DOCKER_EXEC_MANAGE) makemigrations
 
 # Run Django migrations
 migrate:
-	$(DOCKER_COMPOSE) exec app python manage.py migrate
+	$(DOCKER_EXEC_MANAGE) migrate
 
 # Create a Django superuser
 createsuperuser:
-	$(DOCKER_COMPOSE) exec app python manage.py createsuperuser
-
-# Open a Django shell
-shell:
-	$(DOCKER_COMPOSE) exec app python manage.py shell_plus --ipython
-
-# Run Django tests
-test:
-	$(DOCKER_COMPOSE) exec app python manage.py test
-
-# Clean and rebuild the Docker Compose services
-rebuild:
-	$(DOCKER_COMPOSE) down
-	$(DOCKER_COMPOSE) build
-	$(DOCKER_COMPOSE) up -d
-
-# Clean and rebuild the Docker Compose services with no cache
-rebuild-no-cache:
-	$(DOCKER_COMPOSE) down
-	$(DOCKER_COMPOSE) build --no-cache
-	$(DOCKER_COMPOSE) up -d
+	$(DOCKER_EXEC_MANAGE) createsuperuser
 
 # Collect static files for Django
 collectstatic:
-	$(DOCKER_COMPOSE) exec app python manage.py collectstatic --noinput
+	$(DOCKER_EXEC_MANAGE) collectstatic --noinput
+
+# Open a Django shell
+shell:
+	$(DOCKER_EXEC_MANAGE) shell_plus --ipython
+
+# Run Django tests
+test:
+	$(DOCKER_EXEC_MANAGE) test
