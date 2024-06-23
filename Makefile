@@ -24,7 +24,7 @@ all: help
 
 help:
 	@printf "Kullanılabilir hedefler:\n\n"
-	@awk '/^[a-zA-Z\-\_0-9%:\\]+:/ { \
+	@awk '/^[a-zA-Z_0-9%:\\-]+:/ { \
 		helpMessage = match(lastLine, /^## (.*)/); \
 		if (helpMessage) { \
 			helpCommand = $$1; \
