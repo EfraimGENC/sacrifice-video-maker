@@ -10,6 +10,7 @@ from PIL import Image, ImageCms
 from phonenumber_field.modelfields import PhoneNumberField
 
 from .enums import ShareType, LogoPosition, AnimalStatus
+from .validators import FileSizeValidator
 from .utils import (year_choices, current_year, animal_video_path_original, animal_video_path_processed,
                     animal_video_path_cover)
 
@@ -37,9 +38,10 @@ class ProcessingSettings(models.Model):
         blank=True,
         null=True,
         validators=[
-            FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm'])
+            FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm']),
+            FileSizeValidator(100)
         ],
-        help_text=_('Giriş videosu')
+        help_text=_('Giriş videosu. Maksimum dosya boyutu 100 MB.')
     )
     outro = models.FileField(
         _('Çıkış'),
@@ -47,9 +49,10 @@ class ProcessingSettings(models.Model):
         blank=True,
         null=True,
         validators=[
-            FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm'])
+            FileExtensionValidator(allowed_extensions=['MOV', 'avi', 'mp4', 'webm']),
+            FileSizeValidator(100)
         ],
-        help_text=_('Çıkış videosu')
+        help_text=_('Çıkış videosu. Maksimum dosya boyutu 100 MB.')
     )
     frame = models.ImageField(
         _('Çerçeve'),
@@ -57,16 +60,21 @@ class ProcessingSettings(models.Model):
         blank=True,
         null=True,
         validators=[
-            FileExtensionValidator(allowed_extensions=['png', 'jpg', 'jpeg', 'webp'])
+            FileExtensionValidator(allowed_extensions=['png', 'jpg', 'jpeg', 'webp']),
+            FileSizeValidator(100)
         ],
-        help_text=_('Çerçeve resmi')
+        help_text=_('Çerçeve resmi. Maksimum dosya boyutu 100 MB.')
     )
     logo = models.ImageField(
         _('Logo'),
         upload_to='logos',
         blank=True,
         null=True,
-        help_text=_('Logo resmi')
+        validators=[
+            FileExtensionValidator(allowed_extensions=['png', 'jpg', 'jpeg', 'webp']),
+            FileSizeValidator(100)
+        ],
+        help_text=_('Logo resmi. Maksimum dosya boyutu 100 MB.'),
     )
     logo_height = models.PositiveIntegerField(
         _('Logo Yükseklik'),
@@ -136,9 +144,10 @@ class Animal(BaseModel):
         blank=True,
         null=True,
         validators=[
-            FileExtensionValidator(allowed_extensions=['png', 'jpg', 'jpeg', 'webp'])
+            FileExtensionValidator(allowed_extensions=['png', 'jpg', 'jpeg', 'webp']),
+            FileSizeValidator(100)
         ],
-        help_text=_('Kapak resmi')
+        help_text=_('Kapak resmi. Maksimum dosya boyutu 100 MB.')
     )
     status = models.PositiveSmallIntegerField(
         default=AnimalStatus.UNPROCESSED,
@@ -151,7 +160,11 @@ class Animal(BaseModel):
         upload_to=animal_video_path_original,
         blank=True,
         null=True,
-        help_text=_('Orijinal kurban kesim videosu'),
+        validators=[
+            FileExtensionValidator(allowed_extensions=['mp4', 'mov']),
+            FileSizeValidator(100)
+        ],
+        help_text=_('Orijinal kurban kesim videosu. Maksimum dosya boyutu 100 MB.'),
     )
     processed_video = models.FileField(
         _('İşlenmiş Video'),
@@ -159,7 +172,11 @@ class Animal(BaseModel):
         blank=True,
         null=True,
         editable=False,
-        help_text=_('İşlenmiş kurban kesim videosu')
+        validators=[
+            FileExtensionValidator(allowed_extensions=['mp4', 'mov']),
+            FileSizeValidator(100)
+        ],
+        help_text=_('İşlenmiş kurban kesim videosu. Maksimum dosya boyutu 100 MB.')
     )
 
     def __str__(self):

@@ -128,8 +128,17 @@ class AnimalServices:
 
     @staticmethod
     def fetch_animals_for_auto_processing() -> list[int]:
-        available_animals_query = Q(status=AnimalStatus.UNPROCESSED, season__auto_process=True)
-        return Animal.objects.filter(available_animals_query).exclude(non_video_query).values_list('id', flat=True)
+        ids = Animal.objects.filter(
+            Q(status=AnimalStatus.UNPROCESSED, season__auto_process=True)
+        ).exclude(
+            non_video_query
+        ).values_list(
+            'id',
+            flat=True
+        ).order_by(
+            '-created_at'
+        )
+        return list(ids)
 
     @staticmethod
     def process_animal(animal: Animal):

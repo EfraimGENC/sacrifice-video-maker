@@ -58,13 +58,13 @@ git-pull:
 	git pull
 
 # Clean and rebuild the Docker Compose services
-rebuild: down pull build up prune logs
+rebuild: down pull build up logs
 
 # Clean and rebuild the Docker Compose services with no cache
-rebuild-no-cache: down pull build-no-cache up prune logs
+rebuild-no-cache: down pull build-no-cache up logs
 
 # Update
-update: down git-pull rebuild-no-cache
+update: down prune git-pull rebuild-no-cache
 
 
 # Django Commands
