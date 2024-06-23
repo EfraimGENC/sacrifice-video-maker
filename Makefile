@@ -81,7 +81,7 @@ rebuild: down pull build up logs
 rebuild-no-cache: down pull build-no-cache up logs
 
 ## Update: down prune git-pull rebuild-no-cache
-update: down prune git-pull rebuild-no-cache
+update: down git-pull rebuild-no-cache
 
 
 # Django Commands
