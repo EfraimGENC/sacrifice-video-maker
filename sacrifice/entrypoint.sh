@@ -19,7 +19,7 @@ WORKERS=$((2 * CPU_LIMIT + 1))
 # Ortak gunicorn komutunu tanımla
 run_gunicorn() {
   gunicorn --bind 0.0.0.0:8000 sacrifice.asgi:application \
-    -w $WORKERS \
+    -w $1 \
     -k uvicorn.workers.UvicornWorker \
     --worker-tmp-dir /dev/shm \
     --log-level debug \
@@ -27,7 +27,7 @@ run_gunicorn() {
     --error-logfile - \
     --timeout 120 \
     --keep-alive 75 \
-    $1
+    $2
 }
 
 # Ortak collectstatic komutunu çalıştır
@@ -36,7 +36,7 @@ python3 manage.py collectstatic --no-input --clear --settings="${DJANGO_SETTINGS
 # Environment kontrolü
 if [ "$BUILD_ENV" = "dev" ]
 then
-  run_gunicorn "--reload"
+  run_gunicorn 1 "--reload"
 else
-  run_gunicorn "--preload"
+  run_gunicorn $WORKERS "--preload"
 fi
