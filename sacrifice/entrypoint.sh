@@ -5,20 +5,38 @@ echo "$BUILD_ENV"
 echo "$DJANGO_SETTINGS_MODULE"
 echo "$APP_PORT"
 
+# Veritabanını bekleyip, migrate işlemini yap
 python3 manage.py wait_for_db
 python3 manage.py migrate
 
-# CPU cekirdek sayisini al
+# CPU çekirdek sayısını al
 CPU_CORES=$(nproc)
-# CPU cekirdek sayisini yuvarla
+# CPU çekirdek sayısını yuvarla
 CPU_LIMIT=$(awk -v cpus="$CPU_CORES" 'BEGIN { printf "%.0f", cpus }')
-# Worker sayisini hesapla
+# Worker sayısını hesapla
 WORKERS=$((2 * CPU_LIMIT + 1))
 
+# Ortak gunicorn komutunu tanımla
+run_gunicorn() {
+  gunicorn --bind 0.0.0.0:8000 sacrifice.asgi:application \
+    -w $WORKERS \
+    -k uvicorn.workers.UvicornWorker \
+    --worker-tmp-dir /dev/shm \
+    --log-level debug \
+    --access-logfile - \
+    --error-logfile - \
+    --timeout 120 \
+    --keep-alive 75 \
+    $1
+}
+
+# Ortak collectstatic komutunu çalıştır
+python3 manage.py collectstatic --no-input --clear --settings="${DJANGO_SETTINGS_MODULE}"
+
+# Environment kontrolü
 if [ "$BUILD_ENV" = "dev" ]
 then
-  python3 manage.py runserver 0.0.0.0:8000
+  run_gunicorn "--reload"
 else
-  python3 manage.py collectstatic --no-input --clear --settings="${DJANGO_SETTINGS_MODULE}"
-  gunicorn --bind 0.0.0.0:8000 sacrifice.asgi:application -w $WORKERS -k uvicorn.workers.UvicornWorker --worker-tmp-dir /dev/shm --log-level debug --access-logfile - --error-logfile -
+  run_gunicorn "--preload"
 fi

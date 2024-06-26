@@ -16,7 +16,8 @@ ifeq ($(BUILD_ENV), prod)
 else
     DOCKER_COMPOSE = $(DOCKER_COMPOSE_DEV)
 endif
-DOCKER_EXEC_MANAGE = $(DOCKER_COMPOSE) exec app python manage.py
+DOCKER_EXEC_APP = $(DOCKER_COMPOSE) exec app
+DOCKER_EXEC_MANAGE = $(DOCKER_EXEC_APP) python manage.py
 
 .PHONY: help all build build-no-cache up down logs restart pull prune git-pull rebuild rebuild-no-cache update makemigrations migrate createsuperuser collectstatic shell test
 
@@ -109,3 +110,10 @@ shell:
 ## Run Django tests
 test:
 	$(DOCKER_EXEC_MANAGE) test
+
+## Docker exec into the app container
+exec:
+	$(DOCKER_EXEC_APP) /bin/sh -c "$(filter-out $@,$(MAKECMDGOALS))"
+
+%:
+	@:
