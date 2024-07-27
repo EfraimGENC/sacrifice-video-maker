@@ -17,15 +17,15 @@ services:
       timeout: 3s
       retries: 3
 
-  app:
-    image: sacrifice
-    container_name: sacrifice_app
+  app: &app
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - DEBUG=${DEBUG:?error}
         - BUILD_ENV=${BUILD_ENV:?error}
+    image: sacrifice
+    container_name: sacrifice_app
     restart: unless-stopped
     env_file: .env
     volumes:
@@ -40,21 +40,17 @@ services:
       - redis
 
   beat:
-    image: sacrifice
+    <<: *app
     container_name: sacrifice_beat
-    restart: unless-stopped
-    env_file: .env
+    ports: []
     command: celery -A sacrifice beat --loglevel=INFO
-    volumes:
-      - ./sacrifice:/app
     depends_on:
       - app
 
   worker:
-    image: sacrifice
+    <<: *app
     container_name: sacrifice_worker
-    restart: unless-stopped
-    env_file: .env
+    ports: []
     deploy:
       resources:
         limits:
