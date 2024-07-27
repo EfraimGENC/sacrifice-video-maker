@@ -79,6 +79,12 @@ class ShareAdmin(admin.ModelAdmin):
     search_fields = ('name', 'phone', 'by', 'animal__code')
     autocomplete_fields = ('animal',)
 
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        formfield = super().formfield_for_dbfield(db_field, **kwargs)
+        if db_field.name == 'phone':
+            formfield.help_text = _('Use plus sign (+) and country code (e.g. +905555555555)')
+        return formfield
+
     @admin.display(description='Telefon')
     def formatted_phone(self, obj):
         if obj.phone:

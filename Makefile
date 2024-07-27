@@ -7,8 +7,8 @@ ifneq (,$(wildcard ./.env))
 endif
 
 # Variables
-DOCKER_COMPOSE_DEV = docker compose -f docker-compose.yml -f docker-compose.override.yml
-DOCKER_COMPOSE_PROD = docker compose -f docker-compose.yml -f docker-compose.prod.yml
+DOCKER_COMPOSE_DEV = docker compose -f compose.yml -f compose.dev.yml
+DOCKER_COMPOSE_PROD = docker compose -f compose.yml -f compose.prod.yml
 
 # Check if ENV is set, default to 'dev'
 ifeq ($(BUILD_ENV), prod)
@@ -17,7 +17,7 @@ else
     DOCKER_COMPOSE = $(DOCKER_COMPOSE_DEV)
 endif
 DOCKER_EXEC_APP = $(DOCKER_COMPOSE) exec app
-DOCKER_EXEC_MANAGE = $(DOCKER_EXEC_APP) python manage.py
+DOCKER_EXEC_MANAGE = $(DOCKER_EXEC_APP) python3 manage.py
 
 .PHONY: help all build build-no-cache up down logs restart pull prune git-pull rebuild rebuild-no-cache update makemigrations migrate createsuperuser collectstatic shell test
 
@@ -87,6 +87,10 @@ update: down git-pull rebuild-no-cache
 
 # Django Commands
 
+## Manage.py commands
+manage:
+	$(DOCKER_EXEC_MANAGE) $(cmd)
+
 ## Run Django makemigrations
 makemigrations:
 	$(DOCKER_EXEC_MANAGE) makemigrations
@@ -102,6 +106,14 @@ createsuperuser:
 ## Collect static files for Django
 collectstatic:
 	$(DOCKER_EXEC_MANAGE) collectstatic --noinput
+
+## Makemessages for Django
+makemessages:
+	$(DOCKER_EXEC_MANAGE) makemessages -a --verbosity=3
+
+## Compilemessages for Django
+compilemessages:
+	$(DOCKER_EXEC_MANAGE) compilemessages --ignore=env
 
 ## Open a Django shell
 shell:

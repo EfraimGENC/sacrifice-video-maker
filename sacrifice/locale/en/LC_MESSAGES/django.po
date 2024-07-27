@@ -1,0 +1,261 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-07-27 23:42+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: core/admin.py:68
+msgid "Seçili hayvan içerisinde işlenmeye uygun olan bulunamadı."
+msgstr ""
+
+#: core/admin.py:72
+msgid "{len(ids)} kurban videosu başarıyla işleme kuyruğuna alındı."
+msgstr ""
+
+#: core/admin.py:85
+msgid "Use plus sign (+) and country code (e.g. +905555555555)"
+msgstr ""
+
+#: core/enums.py:6
+msgid "Vacip"
+msgstr ""
+
+#: core/enums.py:7
+msgid "Şükür"
+msgstr ""
+
+#: core/enums.py:8
+msgid "Akika"
+msgstr ""
+
+#: core/enums.py:9
+msgid "Adak"
+msgstr ""
+
+#: core/enums.py:13
+msgid "Sol Üst"
+msgstr ""
+
+#: core/enums.py:14
+msgid "Sol Alt"
+msgstr ""
+
+#: core/enums.py:15
+msgid "Sağ Üst"
+msgstr ""
+
+#: core/enums.py:16
+msgid "Sağ Alt"
+msgstr ""
+
+#: core/enums.py:17
+msgid "Orta"
+msgstr ""
+
+#: core/enums.py:25
+msgid "İşlenmemiş"
+msgstr ""
+
+#: core/enums.py:26
+msgid "İşleniyor"
+msgstr ""
+
+#: core/enums.py:27
+msgid "İşlenmiş"
+msgstr ""
+
+#: core/enums.py:28
+msgid "Hata"
+msgstr ""
+
+#: core/models.py:30
+msgid "Otomatik İşleme"
+msgstr ""
+
+#: core/models.py:32
+msgid ""
+"Kurban videoları arkaplanda düzenli olarak işlensin mi?         "
+"İşaretlerseniz, \"işlenmemiş\" durumundaki videolar otomatik olarak "
+"arkaplanda işlenir."
+msgstr ""
+
+#: core/models.py:36
+msgid "Giriş"
+msgstr ""
+
+#: core/models.py:44
+msgid "Giriş videosu. Maksimum dosya boyutu 100 MB."
+msgstr ""
+
+#: core/models.py:47
+msgid "Çıkış"
+msgstr ""
+
+#: core/models.py:55
+msgid "Çıkış videosu. Maksimum dosya boyutu 100 MB."
+msgstr ""
+
+#: core/models.py:58
+msgid "Çerçeve"
+msgstr ""
+
+#: core/models.py:66
+msgid "Çerçeve resmi. Maksimum dosya boyutu 100 MB."
+msgstr ""
+
+#: core/models.py:69
+msgid "Logo"
+msgstr ""
+
+#: core/models.py:77
+msgid "Logo resmi. Maksimum dosya boyutu 100 MB."
+msgstr ""
+
+#: core/models.py:80
+msgid "Logo Yükseklik"
+msgstr ""
+
+#: core/models.py:82
+msgid "Logo yüksekliği"
+msgstr ""
+
+#: core/models.py:85
+msgid "Logo Pozisyon"
+msgstr ""
+
+#: core/models.py:89
+msgid "Logo pozisyonu"
+msgstr ""
+
+#: core/models.py:92
+msgid "Logo Sağ Kenar Boşluğu"
+msgstr ""
+
+#: core/models.py:94
+msgid "Logo sağ kenar boşluğu"
+msgstr ""
+
+#: core/models.py:97
+msgid "Logo Alt Kenar Boşluğu"
+msgstr ""
+
+#: core/models.py:99
+msgid "Logo alt kenar boşluğu"
+msgstr ""
+
+#: core/models.py:102
+msgid "Logo Sol Kenar Boşluğu"
+msgstr ""
+
+#: core/models.py:104
+msgid "Logo sol kenar boşluğu"
+msgstr ""
+
+#: core/models.py:107
+msgid "Logo Üst Kenar Boşluğu"
+msgstr ""
+
+#: core/models.py:109
+msgid "Logo üst kenar boşluğu"
+msgstr ""
+
+#: core/models.py:117 core/models.py:217
+msgid "İsim"
+msgstr ""
+
+#: core/models.py:118
+msgid "Yıl"
+msgstr ""
+
+#: core/models.py:124 core/models.py:134
+msgid "Sezon"
+msgstr ""
+
+#: core/models.py:125
+msgid "Sezonlar"
+msgstr ""
+
+#: core/models.py:139
+msgid "Kod/Numara"
+msgstr ""
+
+#: core/models.py:142
+msgid "Kapak"
+msgstr ""
+
+#: core/models.py:150
+msgid "Kapak resmi. Maksimum dosya boyutu 100 MB."
+msgstr ""
+
+#: core/models.py:154
+msgid "Durum"
+msgstr ""
+
+#: core/models.py:156
+msgid "Video işlenme durumu"
+msgstr ""
+
+#: core/models.py:159
+msgid "Orjinal Video"
+msgstr ""
+
+#: core/models.py:167
+msgid "Orijinal kurban kesim videosu. Maksimum dosya boyutu 100 MB."
+msgstr ""
+
+#: core/models.py:170
+msgid "İşlenmiş Video"
+msgstr ""
+
+#: core/models.py:179
+msgid "İşlenmiş kurban kesim videosu. Maksimum dosya boyutu 100 MB."
+msgstr ""
+
+#: core/models.py:186 core/models.py:216
+msgid "Hayvan"
+msgstr ""
+
+#: core/models.py:187
+msgid "Hayvanlar"
+msgstr ""
+
+#: core/models.py:218
+msgid "Telefon"
+msgstr ""
+
+#: core/models.py:219
+msgid "Türü"
+msgstr ""
+
+#: core/models.py:220
+msgid "Vesile"
+msgstr ""
+
+#: core/models.py:226
+msgid "Hisse"
+msgstr ""
+
+#: core/models.py:227
+msgid "Hisseler"
+msgstr ""
+
+#: sacrifice/settings/base.py:150
+msgid "Turkish"
+msgstr ""
+
+#: sacrifice/settings/base.py:151
+msgid "English"
+msgstr ""

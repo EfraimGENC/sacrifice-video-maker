@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1 \
     DJANGO_SETTINGS_MODULE=sacrifice.settings.$BUILD_ENV \
     APP_HOME=/app
 
-RUN apt update && apt upgrade -y && apt install ffmpeg -y
+RUN apt update && apt upgrade -y && apt install ffmpeg gettext -y
 
 WORKDIR $APP_HOME
 
